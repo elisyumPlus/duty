@@ -2,18 +2,50 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Duty Web Sitesi</title>
+  <title>Giriş / Çıkış Takip</title>
   <style>
-    body {
-      background: #f2f2f2;
-      font-family: sans-serif;
-      text-align: center;
-      padding-top: 100px;
-    }
+    body { font-family: sans-serif; text-align: center; margin-top: 100px; }
+    input, button { padding: 10px; margin: 10px; font-size: 16px; }
+    #log { margin-top: 30px; }
   </style>
 </head>
 <body>
-  <h1>Duty Kontrol Sistemi</h1>
-  <p>20 verrrr!</p>
+  <h1>Çalışan Giriş / Çıkış Takip Sistemi</h1>
+  <input type="text" id="isim" placeholder="Ad Soyad" />
+  <br />
+  <button onclick="kaydet('Giriş')">Giriş Yap</button>
+  <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
+
+  <div id="log"></div>
+
+  <script>
+    const logDiv = document.getElementById('log');
+
+    function kaydet(tip) {
+      const isim = document.getElementById('isim').value.trim();
+      if (!isim) {
+        alert("Lütfen adınızı girin.");
+        return;
+      }
+
+      const zaman = new Date().toLocaleString();
+      const kayit = `${zaman} - ${isim} - ${tip}`;
+
+      // Tarayıcı belleğine kaydet
+      let liste = JSON.parse(localStorage.getItem('kayitlar') || '[]');
+      liste.push(kayit);
+      localStorage.setItem('kayitlar', JSON.stringify(liste));
+
+      // Güncel listeyi göster
+      guncelle();
+    }
+
+    function guncelle() {
+      const liste = JSON.parse(localStorage.getItem('kayitlar') || '[]');
+      logDiv.innerHTML = "<h3>Kayıtlar:</h3>" + liste.map(k => `<div>${k}</div>`).join('');
+    }
+
+    guncelle();
+  </script>
 </body>
 </html>
