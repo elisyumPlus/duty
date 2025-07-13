@@ -2,160 +2,9 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>DutyFresh | Çalışan Giriş / Çıkış</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #1a1a2e, #0f3460);
-      color: #e0e0e0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      background: rgba(15, 52, 96, 0.9);
-      padding: 20px 30px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    }
-
-    header svg {
-      width: 50px;
-      height: 50px;
-      fill: #a3cef1;
-    }
-
-    header h1 {
-      font-weight: 600;
-      font-size: 1.8rem;
-      margin: 0;
-    }
-
-    nav {
-      background: rgba(15, 52, 96, 0.85);
-      padding: 12px 30px;
-      display: flex;
-      justify-content: center;
-      gap: 40px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-
-    nav a {
-      color: #a3cef1;
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 1rem;
-      transition: color 0.3s ease;
-      position: relative;
-    }
-
-    nav a::after {
-      content: '';
-      display: block;
-      width: 0;
-      height: 3px;
-      background: #a3cef1;
-      transition: width 0.3s;
-      position: absolute;
-      bottom: -6px;
-      left: 0;
-      border-radius: 2px;
-    }
-
-    nav a:hover,
-    nav a:focus {
-      color: #d4f1f9;
-    }
-
-    nav a:hover::after,
-    nav a:focus::after {
-      width: 100%;
-    }
-
-    main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
-    }
-
-    input[type="text"] {
-      width: 280px;
-      padding: 14px 16px;
-      border-radius: 30px;
-      border: none;
-      font-size: 1.1rem;
-      outline: none;
-      margin-bottom: 20px;
-      transition: box-shadow 0.3s ease;
-    }
-
-    input[type="text"]:focus {
-      box-shadow: 0 0 10px #a3cef1;
-    }
-
-    button {
-      padding: 14px 28px;
-      border: none;
-      border-radius: 30px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin: 10px;
-      background: #0f3460;
-      color: #a3cef1;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.4);
-    }
-
-    button:hover {
-      background: #1a4a8e;
-      color: #d4f1f9;
-    }
-
-    footer {
-      background: rgba(15, 52, 96, 0.9);
-      text-align: center;
-      padding: 15px;
-      font-size: 0.9rem;
-      color: #a3cef1;
-      box-shadow: 0 -2px 5px rgba(0,0,0,0.4);
-    }
-
-    /* Responsive */
-    @media (max-width: 500px) {
-      input[type="text"] {
-        width: 90%;
-      }
-      nav {
-        gap: 20px;
-        padding: 12px 15px;
-      }
-      button {
-        width: 45%;
-        margin: 10px 2.5%;
-      }
-      header h1 {
-        font-size: 1.4rem;
-      }
-      header svg {
-        width: 40px;
-        height: 40px;
-      }
-    }
-  </style>
-  <!-- Firebase SDK -->
+  <link rel="stylesheet" href="styles.css" />
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
     import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
@@ -165,7 +14,7 @@
       authDomain: "duty-84054.firebaseapp.com",
       databaseURL: "https://duty-84054-default-rtdb.firebaseio.com",
       projectId: "duty-84054",
-      storageBucket: "duty-84054.firebasestorage.app",
+      storageBucket: "duty-84054.appspot.com",
       messagingSenderId: "813135619792",
       appId: "1:813135619792:web:c3b04148a3a6aa7e4560d5",
       measurementId: "G-EWCE3HZZ0V"
@@ -175,50 +24,68 @@
     const db = getDatabase(app);
 
     window.kaydet = async function(tip) {
-      const isimInput = document.getElementById('inputIsim');
+      const isimInput = document.getElementById("inputIsim");
       const isim = isimInput.value.trim();
       if (!isim) {
         alert("Lütfen adınızı girin.");
         return;
       }
-      const zaman = new Date().toISOString();
       try {
-        await push(ref(db, 'kayitlar'), { isim, tip, zaman });
-        alert(tip + " kaydı yapıldı!");
+        await push(ref(db, "kayitlar"), {
+          isim,
+          tip,
+          zaman: new Date().toISOString()
+        });
+        alert(`${tip} kaydı yapıldı!`);
         isimInput.value = "";
       } catch (e) {
         alert("Kayıt yapılamadı: " + e.message);
       }
-    }
+    };
   </script>
 </head>
 <body>
 
-  <header>
-    <!-- Basit Logo SVG -->
-    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="DutyFresh Logo" role="img">
-      <circle cx="32" cy="32" r="30" stroke="#a3cef1" stroke-width="4" fill="none"/>
-      <path d="M20 32 L28 40 L44 24" stroke="#a3cef1" stroke-width="4" fill="none" stroke-linecap="round" />
-    </svg>
-    <h1>DutyFresh Restaurant &amp; Cafe</h1>
-  </header>
-
+<header>
   <nav>
-    <a href="index.html" aria-current="page">Giriş / Çıkış</a>
-    <a href="admin.html" target="_blank" rel="noopener">Admin Panel</a>
-    <a href="#hakkinda">Hakkında</a>
-    <a href="#sosyalMedya">Sosyal Medya</a>
+    <img src="https://i.imgur.com/xSmV9Uw.png" alt="DutyFresh Logo" class="logo" />
+    <ul>
+      <li><a href="#girisCikis">Giriş / Çıkış</a></li>
+      <li><a href="#hakkinda">Hakkında</a></li>
+      <li><a href="#sosyalMedya">Sosyal Medya</a></li>
+      <li><a href="admin.html">Admin Panel</a></li>
+    </ul>
   </nav>
+</header>
 
-  <main>
-    <input id="inputIsim" type="text" placeholder="Ad Soyad" aria-label="Çalışan Adı" />
-    <div>
-      <button onclick="kaydet('Giriş')">Giriş Yap</button>
-      <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
-    </div>
-  </main>
+<main id="girisCikis" class="container">
+  <h1>Çalışan Giriş / Çıkış Takip Sistemi</h1>
+  <input type="text" id="inputIsim" placeholder="Ad Soyad" autocomplete="off" />
+  <div class="btn-group">
+    <button onclick="kaydet('Giriş')">Giriş Yap</button>
+    <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
+  </div>
+</main>
 
-  <footer>Yusuf Orhan</footer>
+<section id="hakkinda" class="container section-dark">
+  <h2>Hakkında</h2>
+  <p>
+    DutyFresh Restaurant &amp; Cafe, çalışanların giriş ve çıkışlarını kolayca takip etmek için tasarlanmış kullanıcı dostu bir sistemdir.
+  </p>
+</section>
+
+<section id="sosyalMedya" class="container section-darker">
+  <h2>Sosyal Medya</h2>
+  <p>
+    <a href="https://www.facebook.com/dutyfresh" target="_blank" rel="noopener noreferrer">Facebook</a> |
+    <a href="https://www.instagram.com/dutyfresh" target="_blank" rel="noopener noreferrer">Instagram</a> |
+    <a href="https://twitter.com/dutyfresh" target="_blank" rel="noopener noreferrer">Twitter</a>
+  </p>
+</section>
+
+<footer>
+  <p>© 2025 Yusuf Orhan</p>
+</footer>
 
 </body>
 </html>
