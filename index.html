@@ -2,40 +2,20 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Çalışan Takip Sistemi</title>
+  <title>Çalışan Giriş / Çıkış</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding-top: 50px; background: #f4f4f4; }
+    body { font-family: sans-serif; text-align: center; padding-top: 100px; background: #f9f9f9; }
     input, button { padding: 10px; margin: 10px; font-size: 16px; }
-    #adminPanel { display: none; margin-top: 30px; background: white; padding: 20px; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
 
-  <h1>Çalışan Giriş / Çıkış Takip</h1>
+  <h1>Çalışan Giriş / Çıkış Takip Sistemi</h1>
 
-  <!-- Kullanıcı giriş alanı -->
-  <div>
-    <input type="text" id="isim" placeholder="Ad Soyad" />
-    <br />
-    <button onclick="kaydet('Giriş')">Giriş Yap</button>
-    <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
-  </div>
-
-  <hr style="margin: 40px 0;">
-
-  <!-- Admin girişi -->
-  <div>
-    <h2>Admin Giriş</h2>
-    <input type="password" id="adminSifre" placeholder="Admin şifresi" />
-    <button onclick="adminGir()">Giriş</button>
-  </div>
-
-  <!-- Admin paneli -->
-  <div id="adminPanel">
-    <h2>📋 Kayıt Listesi (Sadece Admin)</h2>
-    <div id="log"></div>
-    <button onclick="temizle()">Tüm Kayıtları Temizle</button>
-  </div>
+  <input type="text" id="isim" placeholder="Ad Soyad" />
+  <br />
+  <button onclick="kaydet('Giriş')">Giriş Yap</button>
+  <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
 
   <script>
     function kaydet(tip) {
@@ -44,45 +24,15 @@
         alert("Lütfen adınızı girin.");
         return;
       }
-
       const zaman = new Date().toLocaleString();
       const kayit = `${zaman} - ${isim} - ${tip}`;
-
       let liste = JSON.parse(localStorage.getItem('kayitlar') || '[]');
       liste.push(kayit);
       localStorage.setItem('kayitlar', JSON.stringify(liste));
-
       alert(`${tip} kaydı yapıldı!`);
-    }
-
-    function adminGir() {
-      const sifre = document.getElementById('adminSifre').value;
-
-      // ⚠️ Basit demo amaçlı şifre kontrolü (gizli değil!)
-      if (sifre === "1234") {
-        document.getElementById('adminPanel').style.display = 'block';
-        guncelle();
-      } else {
-        alert("Hatalı şifre!");
-      }
-    }
-
-    function guncelle() {
-      const liste = JSON.parse(localStorage.getItem('kayitlar') || '[]');
-      const logDiv = document.getElementById('log');
-      logDiv.innerHTML = liste.length === 0
-        ? "<p>Hiç kayıt yok.</p>"
-        : liste.map(k => `<div>${k}</div>`).join('');
-    }
-
-    function temizle() {
-      if (confirm("Tüm kayıtlar silinsin mi?")) {
-        localStorage.removeItem('kayitlar');
-        guncelle();
-      }
+      document.getElementById('isim').value = "";
     }
   </script>
 
 </body>
 </html>
-
