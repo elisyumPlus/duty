@@ -2,40 +2,73 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<title>Admin Paneli</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Giriş</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: #fff;
-    padding: 40px;
-    text-align: center;
+    font-family: 'Roboto', sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
   }
-  h1 {
-    color: #333;
+  h2 {
+    margin-bottom: 20px;
+  }
+  input[type="password"] {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 15px;
+    width: 250px;
   }
   button {
     padding: 10px 20px;
-    margin-top: 20px;
-    border: none;
-    border-radius: 6px;
     font-size: 16px;
-    cursor: pointer;
-    background-color: #555;
+    border: none;
+    border-radius: 5px;
+    background-color: #4a90e2;
     color: white;
+    cursor: pointer;
+    transition: background 0.3s;
   }
   button:hover {
-    background-color: #222;
+    background-color: #357ab8;
   }
+  #adminMenu {
+    display: none;
+    margin-top: 30px;
+    width: 80%;
+  }
+  /* Admin menü stilini buraya ekleyebilirsiniz */
 </style>
 </head>
 <body>
 
-<h1>Admin Paneline Hoşgeldiniz</h1>
+<h2>Admin Giriş</h2>
+<input type="password" id="adminPass" placeholder="Şifre girin" />
+<button onclick="checkAdmin()">Giriş</button>
 
-<p>Burada admin işlemleri yapılabilir.</p>
+<div id="adminMenu">
+  <h3>Admin Menüsü</h3>
+  <!-- Burada admin işlemleri veya kayıtlar gösterilebilir -->
+  <p>Burada admin işlemleri olacak.</p>
+</div>
 
-<!-- Çıkış Butonu -->
-<button onclick="window.location.href='index.html'">Çıkış</button>
+<script>
+function checkAdmin() {
+  const pass = document.getElementById('adminPass').value;
+  if (pass === 'admin123') {
+    document.getElementById('adminMenu').style.display = 'block';
+  } else {
+    alert('Yanlış şifre!');
+  }
+}
+</script>
 
 </body>
 </html>
