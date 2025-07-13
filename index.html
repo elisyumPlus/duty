@@ -4,19 +4,27 @@
   <meta charset="UTF-8" />
   <title>Giriş Sayfası</title>
   <style>
+    /* Sayfa ve yazı stilleri */
     body {
+      margin: 0;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
       background: linear-gradient(135deg, #1e2a38, #134d4d);
       color: white;
-      font-family: Arial, sans-serif;
       display: flex;
-      height: 100vh;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      flex-direction: column;
+      position: relative;
     }
+
     h1 {
       margin-bottom: 20px;
+      position: relative;
+      z-index: 10;
     }
+
     input {
       padding: 12px;
       width: 250px;
@@ -26,7 +34,10 @@
       font-size: 16px;
       background-color: #224455;
       color: white;
+      position: relative;
+      z-index: 10;
     }
+
     button {
       padding: 12px 25px;
       border: none;
@@ -37,19 +48,36 @@
       cursor: pointer;
       font-size: 16px;
       transition: background-color 0.3s;
+      position: relative;
+      z-index: 10;
     }
+
     button:hover {
       background-color: #26714a;
     }
+
     footer {
       position: fixed;
       bottom: 15px;
       font-size: 14px;
       color: #ccc;
+      z-index: 10;
+    }
+
+    /* Baloncuklar için canvas tam ekran */
+    #bubbleCanvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
     }
   </style>
 </head>
 <body>
+
+  <canvas id="bubbleCanvas"></canvas>
 
   <h1>Çalışan Takip Sistemi</h1>
   <input id="username" type="text" placeholder="Adınızı giriniz" autofocus />
@@ -58,6 +86,7 @@
   <footer>Yusuf Orhan</footer>
 
   <script>
+    // Giriş fonksiyonu
     function login() {
       const usernameInput = document.getElementById('username');
       const username = usernameInput.value.trim();
@@ -68,18 +97,91 @@
       }
 
       localStorage.setItem('currentUser', username);
-
-      // Admin olsa bile doğrudan admin paneline gitmiyoruz
-      // employee.html'e gidiyor, orada admin paneli butonu olacak
       window.location.href = 'employee.html';
     }
 
-    // Enter tuşuyla da giriş yapabilmek için:
+    // Enter tuşu ile giriş
     document.getElementById('username').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         login();
       }
     });
+
+    // Baloncuk animasyonu
+    const canvas = document.getElementById('bubbleCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let bubbles = [];
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createBubble() {
+      return {
+        x: random(0, width),
+        y: random(height, height + 100),
+        radius: random(10, 30),
+        speed: random(0.5, 1.5),
+        color: `rgba(${random(120, 200)}, 0, ${random(120, 255)}, 0.6)`, // mor-kırmızı arası renkler
+        angle: random(0, Math.PI * 2),
+        angleSpeed: random(0.01, 0.03)
+      };
+    }
+
+    function init() {
+      resize();
+      bubbles = [];
+      for (let i = 0; i < 40; i++) {
+        bubbles.push(createBubble());
+      }
+      animate();
+    }
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    window.addEventListener('resize', resize);
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      bubbles.forEach(b => {
+        // Yüksel
+        b.y -= b.speed;
+        // Yatay salınım
+        b.x += Math.sin(b.angle) * 0.5;
+        b.angle += b.angleSpeed;
+
+        // Yeniden başlat
+        if (b.y + b.radius < 0) {
+          b.x = random(0, width);
+          b.y = height + b.radius;
+          b.radius = random(10, 30);
+          b.speed = random(0.5, 1.5);
+          b.color = `rgba(${random(120, 200)}, 0, ${random(120, 255)}, 0.6)`;
+          b.angle = random(0, Math.PI * 2);
+          b.angleSpeed = random(0.01, 0.03);
+        }
+
+        // Baloncuk çiz
+        let gradient = ctx.createRadialGradient(b.x, b.y, b.radius * 0.3, b.x, b.y, b.radius);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+        gradient.addColorStop(1, b.color);
+
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    init();
   </script>
 </body>
 </html>
