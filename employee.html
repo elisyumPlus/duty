@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<title>Çalışan Paneli</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e2a38, #134d4d);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background-color: #224455;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  header h2 {
+    margin: 0;
+  }
+
+  header button {
+    background-color: #2e8b57;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  header button:hover {
+    background-color: #26714a;
+  }
+
+  main {
+    flex: 1;
+    padding: 20px 30px;
+  }
+
+  #addForm, #filterForm {
+    background-color: #134d4d;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  #addForm input, #filterForm input {
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    flex: 1 1 150px;
+    font-size: 16px;
+    background-color: #224455;
+    color: white;
+  }
+
+  #addForm button, #filterForm button {
+    background-color: #2e8b57;
+    border: none;
+    padding: 10px 25px;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    flex: 0 0 auto;
+  }
+  #addForm button:hover, #filterForm button:hover {
+    background-color: #26714a;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #134d4d;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #224455;
+    text-align: left;
+  }
+
+  th {
+    background-color: #224455;
+  }
+
+  tr:hover {
+    background-color: #2e8b57;
+    cursor: default;
+  }
+
+  .action-btn {
+    background-color: #26714a;
+    border: none;
+    padding: 6px 12px;
+    margin-right: 6px;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .action-btn:hover {
+    background-color: #1e5a3c;
+  }
+
+  footer {
+    padding: 15px 30px;
+    text-align: center;
+    font-size: 14px;
+    color: #ccc;
+    background-color: #134d4d;
+  }
+
+  /* Düzenleme modal */
+  #editModal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+
+  #editModal .modal-content {
+    background-color: #224455;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+  }
+
+  #editModal .modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    border: none;
+    background-color: #134d4d;
+    color: white;
+    font-size: 16px;
+  }
+
+  #editModal .modal-content button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  #editModal .modal-content .save-btn {
+    background-color: #2e8b57;
+    color: white;
+  }
+  #editModal .modal-content .cancel-btn {
+    background-color: #a03e3e;
+    color: white;
+  }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h2>Çalışan Paneli</h2>
+  <button id="logoutBtn">Çıkış Yap</button>
+</header>
+
+<main>
+
+  <form id="filterForm">
+    <input type="text" id="filterInput" placeholder="İsimle filtrele..." />
+    <button type="button" id="clearFilter">Filtreyi Temizle</button>
+  </form>
+
+  <form id="addForm">
+    <input type="text" id="addName" placeholder="İsim" required />
+    <input type="text" id="addDepartment" placeholder="Departman" required />
+    <button type="submit">Ekle</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>İsim</th>
+        <th>Departman</th>
+        <th>İşlemler</th>
+      </tr>
+    </thead>
+    <tbody id="employeeTableBody">
+      <!-- Kayıtlar buraya gelecek -->
+    </tbody>
+  </table>
+
+</main>
+
+<footer>Yusuf Orhan</footer>
+
+<!-- Düzenleme Modal -->
+<div id="editModal">
+  <div class="modal-content">
+    <h3>Kayıt Düzenle</h3>
+    <input type="text" id="editName" placeholder="İsim" />
+    <input type="text" id="editDepartment" placeholder="Departman" />
+    <div>
+      <button class="save-btn">Kaydet</button>
+      <button class="cancel-btn">İptal</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sayfa açıldığında kullanıcı kontrolü (login)
+  if(!localStorage.getItem('currentUser')) {
+    window.location.href = 'index.html';
+  }
+
+  // Çıkış butonu
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('currentUser');
+    window.location.href = 'index.html';
+  });
+
+  // Kayıt verileri, localStorage ile saklanacak
+  let employees = JSON.parse(localStorage.getItem('employees') || '[]');
+
+  // Elementler
+  const employeeTableBody = document.getElementById('employeeTableBody');
+  const addForm = document.getElementById('addForm');
+  const addName = document.getElementById('addName');
+  const addDepartment = document.getElementById('addDepartment');
+  const filterInput = document.getElementById('filterInput');
+  const clearFilterBtn = document.getElementById('clearFilter');
+
+  const editModal = document.getElementById('editModal');
+  const editName = document.getElementById('editName');
+  const editDepartment = document.getElementById('editDepartment');
+  const saveBtn = editModal.querySelector('.save-btn');
+  const cancelBtn = editModal.querySelector('.cancel-btn');
+
+  let editIndex = null;
+
+  function saveEmployees() {
+    localStorage.setItem('employees', JSON.stringify(employees));
+  }
+
+  function renderEmployees(filter = '') {
+    employeeTableBody.innerHTML = '';
+
+    let filtered = employees.filter(e =>
+      e.name.toLowerCase().includes(filter.toLowerCase())
+    );
+
+    filtered.forEach((e, i) => {
+      const tr = document.createElement('tr');
+
+      const tdName = document.createElement('td');
+      tdName.textContent = e.name;
+
+      const tdDept = document.createElement('td');
+      tdDept.textContent = e.department;
+
+      const tdActions = document.createElement('td');
+
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Düzenle';
+      editBtn.classList.add('action-btn');
+      editBtn.onclick = () => openEditModal(i);
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = 'Sil';
+      deleteBtn.classList.add('action-btn');
+      deleteBtn.onclick = () => deleteEmployee(i);
+
+      tdActions.appendChild(editBtn);
+      tdActions.appendChild(deleteBtn);
+
+      tr.appendChild(tdName);
+      tr.appendChild(tdDept);
+      tr.appendChild(tdActions);
+
+      employeeTableBody.appendChild(tr);
+    });
+  }
+
+  function addEmployee(e) {
+    e.preventDefault();
+    const name = addName.value.trim();
+    const department = addDepartment.value.trim();
+    if (!name || !department) return;
+
+    employees.push({name, department});
+    saveEmployees();
+    renderEmployees(filterInput.value);
+
+    addName.value = '';
+    addDepartment.value = '';
+  }
+
+  function deleteEmployee(i) {
+    if (confirm('Kaydı silmek istediğinize emin misiniz?')) {
+      employees.splice(i,1);
+      saveEmployees();
+      renderEmployees(filterInput.value);
+    }
+  }
+
+  function openEditModal(i) {
+    editIndex = i;
+    editName.value = employees[i].name;
+    editDepartment.value = employees[i].department;
+    editModal.style.display = 'flex';
+  }
+
+  function closeEditModal() {
+    editModal.style.display = 'none';
+    editIndex = null;
+  }
+
+  function saveEdit() {
+    const name = editName.value.trim();
+    const department = editDepartment.value.trim();
+    if (!name || !department) {
+      alert('Lütfen tüm alanları doldurun.');
+      return;
+    }
+    employees[editIndex] = {name, department};
+    saveEmployees();
+    renderEmployees(filterInput.value);
+    closeEditModal();
+  }
+
+  addForm.addEventListener('submit', addEmployee);
+  saveBtn.addEventListener('click', saveEdit);
+  cancelBtn.addEventListener('click', closeEditModal);
+
+  filterInput.addEventListener('input', () => {
+    renderEmployees(filterInput.value);
+  });
+
+  clearFilterBtn.addEventListener('click', () => {
+    filterInput.value = '';
+    renderEmployees();
+  });
+
+  renderEmployees();
+</script>
+
+</body>
+</html>
