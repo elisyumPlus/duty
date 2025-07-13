@@ -17,20 +17,46 @@
   <button onclick="kaydet('Giriş')">Giriş Yap</button>
   <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
 
-  <script>
-    function kaydet(tip) {
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD19WZu6bLaKdqDr5pDEF-FZ5Xifcak4MI",
+      authDomain: "duty-84054.firebaseapp.com",
+      databaseURL: "https://duty-84054-default-rtdb.firebaseio.com",
+      projectId: "duty-84054",
+      storageBucket: "duty-84054.firebasestorage.app",
+      messagingSenderId: "813135619792",
+      appId: "1:813135619792:web:c3b04148a3a6aa7e4560d5",
+      measurementId: "G-EWCE3HZZ0V"
+    };
+
+    // Firebase'i başlat
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    window.kaydet = async function(tip) {
       const isim = document.getElementById('isim').value.trim();
       if (!isim) {
         alert("Lütfen adınızı girin.");
         return;
       }
-      const zaman = new Date().toLocaleString();
-      const kayit = `${zaman} - ${isim} - ${tip}`;
-      let liste = JSON.parse(localStorage.getItem('kayitlar') || '[]');
-      liste.push(kayit);
-      localStorage.setItem('kayitlar', JSON.stringify(liste));
-      alert(`${tip} kaydı yapıldı!`);
-      document.getElementById('isim').value = "";
+      const zaman = new Date().toISOString();
+
+      const kayit = {
+        isim,
+        tip,
+        zaman
+      };
+
+      try {
+        await push(ref(database, 'kayitlar'), kayit);
+        alert(`${tip} kaydı yapıldı!`);
+        document.getElementById('isim').value = "";
+      } catch (error) {
+        alert("Kayıt sırasında hata oluştu: " + error.message);
+      }
     }
   </script>
 
