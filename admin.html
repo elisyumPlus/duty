@@ -2,271 +2,40 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<title>Admin Paneli - Çalışan Yönetimi</title>
+<title>Admin Paneli</title>
 <style>
   body {
-    margin: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #1a2a38, #134d4d);
-    color: white;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-  header {
-    background-color: #224455;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  header h1 {
-    margin: 0;
-  }
-  header button {
-    background-color: #2e8b57;
-    border: none;
-    padding: 8px 18px;
-    border-radius: 6px;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
-  }
-  header button:hover {
-    background-color: #26714a;
-  }
-  main {
-    flex: 1;
-    padding: 20px 30px;
-  }
-  form {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  form input, form select {
-    padding: 8px;
-    border-radius: 6px;
-    border: none;
-    font-size: 16px;
-  }
-  form input[type="text"] {
-    flex: 1;
-  }
-  form button {
-    background-color: #2e8b57;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
-  }
-  form button:hover {
-    background-color: #26714a;
-  }
-  input#filterInput {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 6px;
-    border: none;
-    font-size: 16px;
-    background-color: #224455;
-    color: white;
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #224455;
-  }
-  th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #26714a;
-  }
-  tr:hover {
-    background-color: #26714a;
-  }
-  button.edit, button.delete {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-    margin-right: 5px;
-  }
-  button.edit {
-    background-color: #4a90e2;
-  }
-  button.edit:hover {
-    background-color: #357abd;
-  }
-  button.delete {
-    background-color: #d9534f;
-  }
-  button.delete:hover {
-    background-color: #b52b27;
-  }
-  footer {
-    background-color: #134d4d;
-    padding: 10px 30px;
+    background: #fff;
+    padding: 40px;
     text-align: center;
-    color: #ccc;
-    font-size: 14px;
+  }
+  h1 {
+    color: #333;
+  }
+  button {
+    padding: 10px 20px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #555;
+    color: white;
+  }
+  button:hover {
+    background-color: #222;
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Admin Paneli</h1>
-  <button id="logoutBtn">Çıkış Yap</button>
-</header>
+<h1>Admin Paneline Hoşgeldiniz</h1>
 
-<main>
-  <input type="text" id="filterInput" placeholder="İsim veya Departmana göre filtrele..." />
+<p>Burada admin işlemleri yapılabilir.</p>
 
-  <form id="employeeForm">
-    <input type="text" id="nameInput" placeholder="Çalışan İsmi" required />
-    <select id="departmentInput" required>
-      <option value="" disabled selected>Bölüm Seçiniz</option>
-      <option value="Satış">Satış</option>
-      <option value="Muhasebe">Muhasebe</option>
-      <option value="İnsan Kaynakları">İnsan Kaynakları</option>
-      <option value="IT">IT</option>
-      <option value="Pazarlama">Pazarlama</option>
-    </select>
-    <button type="submit">Ekle</button>
-  </form>
-
-  <table id="employeeTable">
-    <thead>
-      <tr>
-        <th>İsim</th>
-        <th>Bölüm</th>
-        <th>İşlemler</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- Kayıtlar buraya gelecek -->
-    </tbody>
-  </table>
-</main>
-
-<footer>Yusuf Orhan</footer>
-
-<script>
-  // Kullanıcı doğrulama (admin değilse indexe dön)
-  const user = localStorage.getItem('currentUser');
-  if (!user || user.toLowerCase() !== 'admin') {
-    window.location.href = 'index.html';
-  }
-
-  const employeeForm = document.getElementById('employeeForm');
-  const nameInput = document.getElementById('nameInput');
-  const departmentInput = document.getElementById('departmentInput');
-  const employeeTableBody = document.querySelector('#employeeTable tbody');
-  const filterInput = document.getElementById('filterInput');
-  const logoutBtn = document.getElementById('logoutBtn');
-
-  // Çalışanları localStorage'dan al veya boş dizi ata
-  let employees = JSON.parse(localStorage.getItem('employees')) || [];
-
-  function saveEmployees() {
-    localStorage.setItem('employees', JSON.stringify(employees));
-  }
-
-  function renderEmployees(filter = '') {
-    employeeTableBody.innerHTML = '';
-    const filtered = employees.filter(emp =>
-      emp.name.toLowerCase().includes(filter.toLowerCase()) ||
-      emp.department.toLowerCase().includes(filter.toLowerCase())
-    );
-
-    filtered.forEach((emp, index) => {
-      const tr = document.createElement('tr');
-
-      const tdName = document.createElement('td');
-      tdName.textContent = emp.name;
-      tr.appendChild(tdName);
-
-      const tdDept = document.createElement('td');
-      tdDept.textContent = emp.department;
-      tr.appendChild(tdDept);
-
-      const tdActions = document.createElement('td');
-
-      const editBtn = document.createElement('button');
-      editBtn.textContent = 'Düzenle';
-      editBtn.classList.add('edit');
-      editBtn.onclick = () => editEmployee(index);
-      tdActions.appendChild(editBtn);
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.textContent = 'Sil';
-      deleteBtn.classList.add('delete');
-      deleteBtn.onclick = () => deleteEmployee(index);
-      tdActions.appendChild(deleteBtn);
-
-      tr.appendChild(tdActions);
-      employeeTableBody.appendChild(tr);
-    });
-  }
-
-  function editEmployee(index) {
-    const emp = employees[index];
-    nameInput.value = emp.name;
-    departmentInput.value = emp.department;
-    employeeForm.dataset.editIndex = index;
-    employeeForm.querySelector('button').textContent = 'Güncelle';
-  }
-
-  function deleteEmployee(index) {
-    if (confirm('Bu kaydı silmek istediğinize emin misiniz?')) {
-      employees.splice(index, 1);
-      saveEmployees();
-      renderEmployees(filterInput.value);
-    }
-  }
-
-  employeeForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = nameInput.value.trim();
-    const department = departmentInput.value;
-
-    if (!name || !department) return;
-
-    const editIndex = employeeForm.dataset.editIndex;
-
-    if (editIndex !== undefined) {
-      employees[editIndex] = { name, department };
-      delete employeeForm.dataset.editIndex;
-      employeeForm.querySelector('button').textContent = 'Ekle';
-    } else {
-      employees.push({ name, department });
-    }
-
-    saveEmployees();
-    renderEmployees(filterInput.value);
-    employeeForm.reset();
-  });
-
-  filterInput.addEventListener('input', () => {
-    renderEmployees(filterInput.value);
-  });
-
-  logoutBtn.addEventListener('click', () => {
-    localStorage.removeItem('currentUser');
-    window.location.href = 'index.html';
-  });
-
-  // Sayfa ilk yüklendiğinde listeyi göster
-  renderEmployees();
-</script>
+<!-- Çıkış Butonu -->
+<button onclick="window.location.href='index.html'">Çıkış</button>
 
 </body>
 </html>
