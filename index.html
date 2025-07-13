@@ -1,91 +1,195 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>DutyFresh | Çalışan Giriş / Çıkış</title>
-  <link rel="stylesheet" href="styles.css" />
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+  <meta charset="UTF-8">
+  <title>Çalışan Giriş/Çıkış Sistemi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #1e2a38; /* Koyu mavi */
+      color: white;
+    }
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyD19WZu6bLaKdqDr5pDEF-FZ5Xifcak4MI",
-      authDomain: "duty-84054.firebaseapp.com",
-      databaseURL: "https://duty-84054-default-rtdb.firebaseio.com",
-      projectId: "duty-84054",
-      storageBucket: "duty-84054.appspot.com",
-      messagingSenderId: "813135619792",
-      appId: "1:813135619792:web:c3b04148a3a6aa7e4560d5",
-      measurementId: "G-EWCE3HZZ0V"
-    };
+    header {
+      background-color: #2e8b57; /* Koyu yeşil */
+      padding: 20px;
+      text-align: center;
+    }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    main {
+      max-width: 500px;
+      margin: 30px auto;
+      background-color: #2f2f2f; /* Gri */
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.4);
+    }
 
-    window.kaydet = async function(tip) {
-      const isimInput = document.getElementById("inputIsim");
-      const isim = isimInput.value.trim();
-      if (!isim) {
-        alert("Lütfen adınızı girin.");
-        return;
-      }
-      try {
-        await push(ref(db, "kayitlar"), {
-          isim,
-          tip,
-          zaman: new Date().toISOString()
-        });
-        alert(`${tip} kaydı yapıldı!`);
-        isimInput.value = "";
-      } catch (e) {
-        alert("Kayıt yapılamadı: " + e.message);
-      }
-    };
-  </script>
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      background-color: #444;
+      border: none;
+      border-radius: 5px;
+      color: white;
+    }
+
+    button, input[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background-color: #2e8b57;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #records {
+      margin-top: 20px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+      padding: 20px;
+      color: #ccc;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin-bottom: 10px;
+      background-color: #3a3a3a;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-  <nav>
-    <img src="https://i.imgur.com/xSmV9Uw.png" alt="DutyFresh Logo" class="logo" />
-    <ul>
-      <li><a href="#girisCikis">Giriş / Çıkış</a></li>
-      <li><a href="#hakkinda">Hakkında</a></li>
-      <li><a href="#sosyalMedya">Sosyal Medya</a></li>
-      <li><a href="admin.html">Admin Panel</a></li>
-    </ul>
-  </nav>
-</header>
+  <header>
+    <h1>Çalışan Takip Sistemi</h1>
+  </header>
 
-<main id="girisCikis" class="container">
-  <h1>Çalışan Giriş / Çıkış Takip Sistemi</h1>
-  <input type="text" id="inputIsim" placeholder="Ad Soyad" autocomplete="off" />
-  <div class="btn-group">
-    <button onclick="kaydet('Giriş')">Giriş Yap</button>
-    <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
-  </div>
-</main>
+  <main>
+    <!-- Giriş Formu -->
+    <div id="loginForm">
+      <h2>Giriş Yap</h2>
+      <input type="text" id="username" placeholder="Kullanıcı Adı" required>
+      <input type="password" id="password" placeholder="Şifre" required>
+      <button onclick="login()">Giriş</button>
+    </div>
 
-<section id="hakkinda" class="container section-dark">
-  <h2>Hakkında</h2>
-  <p>
-    DutyFresh Restaurant &amp; Cafe, çalışanların giriş ve çıkışlarını kolayca takip etmek için tasarlanmış kullanıcı dostu bir sistemdir.
-  </p>
-</section>
+    <!-- Çalışan Paneli -->
+    <div id="employeePanel" class="hidden">
+      <h2 id="welcome"></h2>
+      <button onclick="clockIn()">📥 Giriş Yap</button>
+      <button onclick="clockOut()">📤 Çıkış Yap</button>
+      <button onclick="logout()">🚪 Çıkış</button>
 
-<section id="sosyalMedya" class="container section-darker">
-  <h2>Sosyal Medya</h2>
-  <p>
-    <a href="https://www.facebook.com/dutyfresh" target="_blank" rel="noopener noreferrer">Facebook</a> |
-    <a href="https://www.instagram.com/dutyfresh" target="_blank" rel="noopener noreferrer">Instagram</a> |
-    <a href="https://twitter.com/dutyfresh" target="_blank" rel="noopener noreferrer">Twitter</a>
-  </p>
-</section>
+      <div id="records">
+        <h3>Giriş / Çıkış Kayıtları</h3>
+        <ul id="recordList"></ul>
+      </div>
+    </div>
+  </main>
 
-<footer>
-  <p>© 2025 Yusuf Orhan</p>
-</footer>
+  <footer>
+    Yusuf Orhan
+  </footer>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+    const employeePanel = document.getElementById("employeePanel");
+    const usernameInput = document.getElementById("username");
+    const passwordInput = document.getElementById("password");
+    const welcome = document.getElementById("welcome");
+    const recordList = document.getElementById("recordList");
+
+    // Basit kullanıcı kontrolü (şifre: 1234)
+    function login() {
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value;
+
+      if (username && password === "1234") {
+        localStorage.setItem("currentUser", username);
+        showPanel();
+      } else {
+        alert("Hatalı kullanıcı adı veya şifre.");
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem("currentUser");
+      loginForm.classList.remove("hidden");
+      employeePanel.classList.add("hidden");
+    }
+
+    function showPanel() {
+      const user = localStorage.getItem("currentUser");
+      if (!user) return;
+
+      loginForm.classList.add("hidden");
+      employeePanel.classList.remove("hidden");
+      welcome.textContent = `Hoş geldin, ${user}`;
+      loadRecords();
+    }
+
+    function clockIn() {
+      addRecord("Giriş");
+    }
+
+    function clockOut() {
+      addRecord("Çıkış");
+    }
+
+    function addRecord(type) {
+      const user = localStorage.getItem("currentUser");
+      const time = new Date().toLocaleString();
+      const newRecord = `${time} - ${type}`;
+      const key = `records_${user}`;
+      const records = JSON.parse(localStorage.getItem(key)) || [];
+      records.unshift(newRecord);
+      localStorage.setItem(key, JSON.stringify(records));
+      loadRecords();
+    }
+
+    function loadRecords() {
+      const user = localStorage.getItem("currentUser");
+      const key = `records_${user}`;
+      const records = JSON.parse(localStorage.getItem(key)) || [];
+      recordList.innerHTML = "";
+      records.forEach(rec => {
+        const li = document.createElement("li");
+        li.textContent = rec;
+        recordList.appendChild(li);
+      });
+    }
+
+    // Otomatik giriş yapılmışsa göster
+    window.onload = () => {
+      if (localStorage.getItem("currentUser")) {
+        showPanel();
+      }
+    }
+  </script>
 
 </body>
 </html>
