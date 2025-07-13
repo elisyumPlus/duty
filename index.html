@@ -3,36 +3,153 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>İsim Giriş Sistemi</title>
+<title>Restoran Yönetim Paneli</title>
 <style>
   body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f4f9;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2e3a4f; /* koyu mavi ton */
+    color: #fff;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
+    min-height: 100vh;
   }
-  .admin-btn {
-    font-size: 36px;
-    padding: 20px 40px;
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  .admin-btn:hover {
-    background-color: #357ab8;
-  }
+  /* Ortadaki kutu */
+.main-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #4CAF50; /* koyu yeşil */
+  text-align: center;
+}
+#nameInput {
+  padding: 10px;
+  font-size: 18px;
+  border-radius: 5px;
+  border: none;
+  width: 250px;
+  margin-bottom: 15px;
+}
+#startBtn {
+  padding: 10px 20px;
+  font-size: 18px;
+  background-color: #4CAF50; /* koyu yeşil */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+#startBtn:hover {
+  background-color: #45a049;
+}
+#mesaiKayit {
+  margin-top: 20px;
+  width: 80%;
+  max-width: 600px;
+}
+#kayitlar {
+  margin-top: 20px;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}
+.kayit {
+  background-color: #3e4a5a; /* biraz açık ton */
+  padding: 8px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+.footer {
+  margin-top: auto;
+  padding: 10px;
+  text-align: center;
+  background-color: #1f2a38; /* koyu mavi */
+  position: relative;
+}
+.admin-btn {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  font-size: 14px;
+  background-color: transparent;
+  border: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+.admin-btn:hover {
+  background-color: #444;
+}
+.yusuf {
+  font-size: 14px;
+  margin-top: 10px;
+  color: #aaa;
+}
 </style>
 </head>
 <body>
 
-<button class="admin-btn" onclick="window.location.href='admin.html'">Dostum Admin Giriş</button>
+<div class="main-container">
+  <h1>RESTORAN YÖNETİM PANELİ</h1>
+  <input type="text" id="nameInput" placeholder="İsim Girin" />
+  <button id="startBtn">Mesai Başlat</button>
+  <div id="mesaiKayit">
+    <h3>Başlatılan Mesai Kayıtları</h3>
+    <div id="kayitlar"></div>
+  </div>
+</div>
+
+<div class="footer">
+  Yusuf Orhan
+</div>
+<button class="admin-btn" onclick="window.location.href='admin.html'">Admin Menu</button>
+
+<script>
+  const kayitlarDiv = document.getElementById('kayitlar');
+  const startBtn = document.getElementById('startBtn');
+  const nameInput = document.getElementById('nameInput');
+
+  let kayitlar = JSON.parse(localStorage.getItem('kayitlar')) || [];
+
+  // Mesai başlatma fonksiyonu
+  startBtn.onclick = () => {
+    const isim = nameInput.value.trim();
+    if (!isim) {
+      alert('Lütfen isim girin!');
+      return;
+    }
+    const now = new Date();
+    const saat = now.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+    const tarih = now.toLocaleDateString('tr-TR');
+    const kayit = { isim, saat, tarih };
+    kayitlar.push(kayit);
+    localStorage.setItem('kayitlar', JSON.stringify(kayitlar));
+    displayKayitlar();
+    nameInput.value = '';
+  };
+
+  function displayKayitlar() {
+    kayitlarDiv.innerHTML = '';
+    kayitlar.forEach(k => {
+      const div = document.createElement('div');
+      div.className = 'kayit';
+      div.innerHTML = `<strong>${k.isim}</strong> - ${k.saat} (${k.tarih})`;
+      kayitlarDiv.appendChild(div);
+    });
+  }
+
+  // Sayfa yüklendiğinde kayıtları göster
+  window.onload = displayKayitlar;
+</script>
+
+<div class="yusuf">Yusuf Orhan</div>
 
 </body>
 </html>
