@@ -105,14 +105,10 @@
     usernameInput.style.display = 'none';
     document.getElementById('loginBtn').style.display = 'none';
 
-    // 3 saniye sonra yönlendir
+    // 5 saniye sonra indexe geri yönlendir
     setTimeout(() => {
-      if (username.toLowerCase() === 'admin') {
-        window.location.href = 'admin.html';
-      } else {
-        window.location.href = 'employee.html';
-      }
-    }, 3000);
+      window.location.href = 'index.html';
+    }, 5000);
   }
 
   document.getElementById('loginBtn').addEventListener('click', login);
