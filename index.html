@@ -8,20 +8,16 @@
     margin: 0;
     height: 100vh;
     font-family: Arial, sans-serif;
-    overflow: hidden;
     background: linear-gradient(135deg, #1e2a38, #134d4d);
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: relative;
   }
 
   h1 {
     margin-bottom: 20px;
-    position: relative;
-    z-index: 10;
   }
 
   input {
@@ -33,8 +29,6 @@
     font-size: 16px;
     background-color: #224455;
     color: white;
-    position: relative;
-    z-index: 10;
   }
 
   button {
@@ -47,8 +41,6 @@
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s;
-    position: relative;
-    z-index: 10;
   }
 
   button:hover {
@@ -60,23 +52,10 @@
     bottom: 15px;
     font-size: 14px;
     color: #ccc;
-    z-index: 10;
-  }
-
-  /* Pırıltılar için canvas */
-  #sparkleCanvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none;
-    z-index: 1;
   }
 </style>
 </head>
 <body>
-
-<canvas id="sparkleCanvas"></canvas>
 
 <h1>Çalışan Takip Sistemi</h1>
 <input id="username" type="text" placeholder="Adınızı giriniz" autofocus />
@@ -103,62 +82,6 @@
       login();
     }
   });
-
-  // Sabit pırıltılar için canvas ayarları ve çizim
-  const canvas = document.getElementById('sparkleCanvas');
-  const ctx = canvas.getContext('2d');
-  let width, height;
-  let sparkles = [];
-
-  function random(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-
-  function createSparkle() {
-    return {
-      x: random(0, width),
-      y: random(0, height),
-      radius: random(1, 3),
-      alpha: random(0.3, 0.6)
-    };
-  }
-
-  function resize() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-  }
-
-  window.addEventListener('resize', () => {
-    resize();
-    drawSparkles();
-  });
-
-  function drawSparkles() {
-    ctx.clearRect(0, 0, width, height);
-    sparkles.forEach(s => {
-      let gradient = ctx.createRadialGradient(s.x, s.y, 0, s.x, s.y, s.radius * 4);
-      gradient.addColorStop(0, `rgba(255,255,255,${s.alpha})`);
-      gradient.addColorStop(1, 'rgba(255,255,255,0)');
-
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.radius * 4, 0, Math.PI * 2);
-      ctx.fill();
-    });
-  }
-
-  function init() {
-    resize();
-    sparkles = [];
-    for (let i = 0; i < 60; i++) {
-      sparkles.push(createSparkle());
-    }
-    drawSparkles();
-  }
-
-  init();
 </script>
 
 </body>
