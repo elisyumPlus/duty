@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Paneli - Çalışan Takip</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #eef2f7; }
+    #panel { display: none; }
+    #log div { margin-bottom: 5px; }
+    input, button { padding: 10px; margin: 10px 0; font-size: 16px; }
+  </style>
+</head>
+<body>
+
+  <h1>Admin Giriş</h1>
+  <input type="password" id="adminSifre" placeholder="Şifre" />
+  <button onclick="adminGir()">Giriş</button>
+
+  <div id="panel">
+    <h2>Kayıt Listesi</h2>
+    <div id="log"></div>
+    <button onclick="temizle()">Tüm Kayıtları Temizle</button>
+  </div>
+
+  <script>
+    function adminGir() {
+      const sifre = document.getElementById('adminSifre').value;
+      if (sifre === "1234") {
+        document.getElementById('panel').style.display = 'block';
+        document.getElementById('adminSifre').style.display = 'none';
+        event.target.style.display = 'none';
+        guncelle();
+      } else {
+        alert("Hatalı şifre!");
+      }
+    }
+
+    function guncelle() {
+      const liste = JSON.parse(localStorage.getItem('kayitlar') || '[]');
+      const logDiv = document.getElementById('log');
+      if (liste.length === 0) {
+        logDiv.innerHTML = "<p>Hiç kayıt yok.</p>";
+      } else {
+        logDiv.innerHTML = liste.map(k => `<div>${k}</div>`).join('');
+      }
+    }
+
+    function temizle() {
+      if (confirm("Tüm kayıtlar silinsin mi?")) {
+        localStorage.removeItem('kayitlar');
+        guncelle();
+      }
+    }
+  </script>
+
+</body>
+</html>
