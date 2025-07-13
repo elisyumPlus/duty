@@ -53,6 +53,13 @@
     font-size: 14px;
     color: #ccc;
   }
+
+  #welcomeMessage {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #90ee90;
+  }
 </style>
 </head>
 <body>
@@ -60,6 +67,8 @@
 <h1>Çalışan Takip Sistemi</h1>
 <input id="username" type="text" placeholder="Adınızı giriniz" autofocus />
 <button onclick="login()">Giriş Yap</button>
+
+<div id="welcomeMessage"></div>
 
 <footer>Yusuf Orhan</footer>
 
@@ -73,10 +82,19 @@
       return;
     }
 
-    localStorage.setItem('currentUser', username);
-    window.location.href = 'employee.html';
+    // Mesaj göster
+    const welcomeDiv = document.getElementById('welcomeMessage');
+    welcomeDiv.textContent = `Çalışan ${username} mesaiye başladı.`;
+
+    // Giriş yapma alanlarını gizle
+    usernameInput.style.display = 'none';
+    event.target.style.display = 'none'; // Butonu gizlemek için
+
+    // Butonun kendisine event yoksa, şöyle yapalım:
+    document.querySelector('button').style.display = 'none';
   }
 
+  // Enter ile de giriş yapsın
   document.getElementById('username').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
       login();
