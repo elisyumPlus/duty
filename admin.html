@@ -6,68 +6,116 @@
 <title>Admin Giriş</title>
 <style>
   body {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f4f9;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2e3a4f; /* koyu mavi ton */
+    color: #fff;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
+    min-height: 100vh;
+    padding: 20px;
   }
   h2 {
+    text-align: center;
     margin-bottom: 20px;
+    color: #4CAF50;
   }
-  input[type="password"] {
+  #sifreInput {
+    display: block;
+    margin: 0 auto 15px auto;
     padding: 10px;
     font-size: 16px;
     border-radius: 5px;
-    border: 1px solid #ccc;
-    margin-bottom: 15px;
+    border: none;
     width: 250px;
   }
-  button {
+  #girisBtn {
+    display: block;
+    margin: 0 auto 20px auto;
     padding: 10px 20px;
     font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
     border: none;
     border-radius: 5px;
-    background-color: #4a90e2;
-    color: white;
     cursor: pointer;
-    transition: background 0.3s;
   }
-  button:hover {
-    background-color: #357ab8;
+  #girisBtn:hover {
+    background-color: #45a049;
   }
-  #adminMenu {
+  #adminKayıt {
     display: none;
-    margin-top: 30px;
-    width: 80%;
+    margin-top: 20px;
   }
-  /* Admin menü stilini buraya ekleyebilirsiniz */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  .footer {
+    margin-top: auto;
+    padding: 10px;
+    text-align: center;
+    background-color: #1f2a38; /* koyu mavi */
+    margin-top: 20px;
+  }
 </style>
 </head>
 <body>
 
 <h2>Admin Giriş</h2>
-<input type="password" id="adminPass" placeholder="Şifre girin" />
-<button onclick="checkAdmin()">Giriş</button>
+<input type="password" id="sifreInput" placeholder="Şifre Girin" />
+<button id="girisBtn">Giriş</button>
 
-<div id="adminMenu">
-  <h3>Admin Menüsü</h3>
-  <!-- Burada admin işlemleri veya kayıtlar gösterilebilir -->
-  <p>Burada admin işlemleri olacak.</p>
+<div id="adminKayıt">
+  <h3>Mesai Kayıtları</h3>
+  <table id="kayitTablosu">
+    <thead>
+      <tr>
+        <th>İsim</th>
+        <th>Saat</th>
+        <th>Tarih</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div class="footer">
+  Yusuf Orhan
 </div>
 
 <script>
-function checkAdmin() {
-  const pass = document.getElementById('adminPass').value;
-  if (pass === 'admin123') {
-    document.getElementById('adminMenu').style.display = 'block';
-  } else {
-    alert('Yanlış şifre!');
+  const password = 'nrusplus'; // şifre
+  const girisBtn = document.getElementById('girisBtn');
+  const sifreInput = document.getElementById('sifreInput');
+  const adminKayıtDiv = document.getElementById('adminKayıt');
+  const tbody = document.querySelector('#kayitTablosu tbody');
+
+  girisBtn.onclick = () => {
+    if (sifreInput.value === password) {
+      alert('Giriş başarılı!');
+      showKayitlar();
+    } else {
+      alert('Yanlış şifre!');
+    }
+  };
+
+  function showKayitlar() {
+    // Kayıtları localstorage'den al
+    const kayitlar = JSON.parse(localStorage.getItem('kayitlar')) || [];
+    tbody.innerHTML = '';
+    kayitlar.forEach(k => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${k.isim}</td><td>${k.saat}</td><td>${k.tarih}</td>`;
+      tbody.appendChild(tr);
+    });
+    document.getElementById('adminKayıt').style.display = 'block';
   }
-}
 </script>
 
 </body>
