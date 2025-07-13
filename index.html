@@ -10,6 +10,10 @@
     padding: 20px;
     text-align: center;
   }
+  h1 {
+    color: #333;
+  }
+  /* Butonlar */
   button {
     padding: 12px 20px;
     margin: 10px;
@@ -17,14 +21,15 @@
     border-radius: 6px;
     font-size: 16px;
     cursor: pointer;
-  }
-  #userBtn {
-    background-color: #4CAF50;
+    background-color: #4CAF50; /* Yeşil */
     color: white;
+    transition: background 0.3s;
   }
   #adminBtn {
-    background-color: #ff5722;
-    color: white;
+    background-color: #ff5722; /* Turuncu */
+  }
+  button:hover {
+    opacity: 0.8;
   }
 </style>
 </head>
@@ -32,20 +37,15 @@
 
 <h1>Hoşgeldiniz</h1>
 
-<!-- Kullanıcı alanı veya giriş -->
 <button id="userBtn">Kullanıcı Alanı</button>
-
-<!-- Admin Menü Tuşu -->
 <button id="adminBtn">Admin Menü</button>
 
 <script>
-  // Admin şifresi
   const adminPassword = 'nrusplus';
 
-  document.getElementById('adminBtn').addEventListener('click', function() {
+  document.getElementById('adminBtn').addEventListener('click', () => {
     const password = prompt('Admin şifresini giriniz:');
     if (password === adminPassword) {
-      // Şifre doğruysa admin paneline yönlendir
       window.location.href = 'admin.html';
     } else {
       alert('Hatalı şifre!');
