@@ -1,195 +1,85 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <title>Çalışan Giriş/Çıkış Sistemi</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <title>Giriş Sayfası</title>
   <style>
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: #1e2a38; /* Koyu mavi */
+      background: linear-gradient(135deg, #1e2a38, #134d4d);
       color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
     }
-
-    header {
-      background-color: #2e8b57; /* Koyu yeşil */
-      padding: 20px;
-      text-align: center;
-    }
-
-    main {
-      max-width: 500px;
-      margin: 30px auto;
-      background-color: #2f2f2f; /* Gri */
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.4);
-    }
-
-    h2 {
-      text-align: center;
+    h1 {
       margin-bottom: 20px;
     }
-
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      background-color: #444;
+    input {
+      padding: 12px;
+      width: 250px;
+      border-radius: 6px;
       border: none;
-      border-radius: 5px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      background-color: #224455;
       color: white;
     }
-
-    button, input[type="submit"] {
-      width: 100%;
-      padding: 12px;
-      background-color: #2e8b57;
+    button {
+      padding: 12px 25px;
       border: none;
+      border-radius: 6px;
+      background-color: #2e8b57;
       color: white;
       font-weight: bold;
-      border-radius: 5px;
       cursor: pointer;
-      margin-top: 10px;
+      font-size: 16px;
+      transition: background-color 0.3s;
     }
-
-    .hidden {
-      display: none;
+    button:hover {
+      background-color: #26714a;
     }
-
-    #records {
-      margin-top: 20px;
-    }
-
     footer {
-      text-align: center;
-      margin-top: 40px;
-      padding: 20px;
+      position: fixed;
+      bottom: 15px;
+      font-size: 14px;
       color: #ccc;
-    }
-
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    li {
-      margin-bottom: 10px;
-      background-color: #3a3a3a;
-      padding: 10px;
-      border-radius: 5px;
     }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>Çalışan Takip Sistemi</h1>
-  </header>
+  <h1>Çalışan Takip Sistemi</h1>
+  <input id="username" type="text" placeholder="Adınızı giriniz" autofocus />
+  <button onclick="login()">Giriş Yap</button>
 
-  <main>
-    <!-- Giriş Formu -->
-    <div id="loginForm">
-      <h2>Giriş Yap</h2>
-      <input type="text" id="username" placeholder="Kullanıcı Adı" required>
-      <input type="password" id="password" placeholder="Şifre" required>
-      <button onclick="login()">Giriş</button>
-    </div>
-
-    <!-- Çalışan Paneli -->
-    <div id="employeePanel" class="hidden">
-      <h2 id="welcome"></h2>
-      <button onclick="clockIn()">📥 Giriş Yap</button>
-      <button onclick="clockOut()">📤 Çıkış Yap</button>
-      <button onclick="logout()">🚪 Çıkış</button>
-
-      <div id="records">
-        <h3>Giriş / Çıkış Kayıtları</h3>
-        <ul id="recordList"></ul>
-      </div>
-    </div>
-  </main>
-
-  <footer>
-    Yusuf Orhan
-  </footer>
+  <footer>Yusuf Orhan</footer>
 
   <script>
-    const loginForm = document.getElementById("loginForm");
-    const employeePanel = document.getElementById("employeePanel");
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
-    const welcome = document.getElementById("welcome");
-    const recordList = document.getElementById("recordList");
-
-    // Basit kullanıcı kontrolü (şifre: 1234)
     function login() {
+      const usernameInput = document.getElementById('username');
       const username = usernameInput.value.trim();
-      const password = passwordInput.value;
 
-      if (username && password === "1234") {
-        localStorage.setItem("currentUser", username);
-        showPanel();
-      } else {
-        alert("Hatalı kullanıcı adı veya şifre.");
+      if (!username) {
+        alert('Lütfen isim giriniz.');
+        return;
       }
+
+      localStorage.setItem('currentUser', username);
+
+      // Admin olsa bile doğrudan admin paneline gitmiyoruz
+      // employee.html'e gidiyor, orada admin paneli butonu olacak
+      window.location.href = 'employee.html';
     }
 
-    function logout() {
-      localStorage.removeItem("currentUser");
-      loginForm.classList.remove("hidden");
-      employeePanel.classList.add("hidden");
-    }
-
-    function showPanel() {
-      const user = localStorage.getItem("currentUser");
-      if (!user) return;
-
-      loginForm.classList.add("hidden");
-      employeePanel.classList.remove("hidden");
-      welcome.textContent = `Hoş geldin, ${user}`;
-      loadRecords();
-    }
-
-    function clockIn() {
-      addRecord("Giriş");
-    }
-
-    function clockOut() {
-      addRecord("Çıkış");
-    }
-
-    function addRecord(type) {
-      const user = localStorage.getItem("currentUser");
-      const time = new Date().toLocaleString();
-      const newRecord = `${time} - ${type}`;
-      const key = `records_${user}`;
-      const records = JSON.parse(localStorage.getItem(key)) || [];
-      records.unshift(newRecord);
-      localStorage.setItem(key, JSON.stringify(records));
-      loadRecords();
-    }
-
-    function loadRecords() {
-      const user = localStorage.getItem("currentUser");
-      const key = `records_${user}`;
-      const records = JSON.parse(localStorage.getItem(key)) || [];
-      recordList.innerHTML = "";
-      records.forEach(rec => {
-        const li = document.createElement("li");
-        li.textContent = rec;
-        recordList.appendChild(li);
-      });
-    }
-
-    // Otomatik giriş yapılmışsa göster
-    window.onload = () => {
-      if (localStorage.getItem("currentUser")) {
-        showPanel();
+    // Enter tuşuyla da giriş yapabilmek için:
+    document.getElementById('username').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        login();
       }
-    }
+    });
   </script>
-
 </body>
 </html>
