@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>Giriş Sayfası</title>
   <style>
-    /* Sayfa ve yazı stilleri */
     body {
       margin: 0;
       height: 100vh;
@@ -64,7 +63,6 @@
       z-index: 10;
     }
 
-    /* Baloncuklar için canvas tam ekran */
     #bubbleCanvas {
       position: fixed;
       top: 0; left: 0;
@@ -86,7 +84,6 @@
   <footer>Yusuf Orhan</footer>
 
   <script>
-    // Giriş fonksiyonu
     function login() {
       const usernameInput = document.getElementById('username');
       const username = usernameInput.value.trim();
@@ -100,14 +97,12 @@
       window.location.href = 'employee.html';
     }
 
-    // Enter tuşu ile giriş
     document.getElementById('username').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') {
         login();
       }
     });
 
-    // Baloncuk animasyonu
     const canvas = document.getElementById('bubbleCanvas');
     const ctx = canvas.getContext('2d');
     let width, height;
@@ -118,21 +113,22 @@
     }
 
     function createBubble() {
+      // Daha büyük ve yavaş baloncuklar
       return {
         x: random(0, width),
-        y: random(height, height + 100),
-        radius: random(10, 30),
-        speed: random(0.5, 1.5),
-        color: `rgba(${random(120, 200)}, 0, ${random(120, 255)}, 0.6)`, // mor-kırmızı arası renkler
+        y: random(height, height + 150),
+        radius: random(25, 45),
+        speed: random(0.2, 0.6),
+        color: `rgba(${random(120, 180)}, ${random(20, 50)}, ${random(30, 70)}, 0.5)`, // kırmızı-mürdüm tonları
         angle: random(0, Math.PI * 2),
-        angleSpeed: random(0.01, 0.03)
+        angleSpeed: random(0.005, 0.015)
       };
     }
 
     function init() {
       resize();
       bubbles = [];
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 30; i++) {
         bubbles.push(createBubble());
       }
       animate();
@@ -150,26 +146,22 @@
     function animate() {
       ctx.clearRect(0, 0, width, height);
       bubbles.forEach(b => {
-        // Yüksel
         b.y -= b.speed;
-        // Yatay salınım
-        b.x += Math.sin(b.angle) * 0.5;
+        b.x += Math.sin(b.angle) * 0.3;
         b.angle += b.angleSpeed;
 
-        // Yeniden başlat
         if (b.y + b.radius < 0) {
           b.x = random(0, width);
           b.y = height + b.radius;
-          b.radius = random(10, 30);
-          b.speed = random(0.5, 1.5);
-          b.color = `rgba(${random(120, 200)}, 0, ${random(120, 255)}, 0.6)`;
+          b.radius = random(25, 45);
+          b.speed = random(0.2, 0.6);
+          b.color = `rgba(${random(120, 180)}, ${random(20, 50)}, ${random(30, 70)}, 0.5)`;
           b.angle = random(0, Math.PI * 2);
-          b.angleSpeed = random(0.01, 0.03);
+          b.angleSpeed = random(0.005, 0.015);
         }
 
-        // Baloncuk çiz
-        let gradient = ctx.createRadialGradient(b.x, b.y, b.radius * 0.3, b.x, b.y, b.radius);
-        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+        let gradient = ctx.createRadialGradient(b.x, b.y, b.radius * 0.4, b.x, b.y, b.radius);
+        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)');
         gradient.addColorStop(1, b.color);
 
         ctx.fillStyle = gradient;
