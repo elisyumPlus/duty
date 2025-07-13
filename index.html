@@ -2,121 +2,53 @@
 <html lang="tr">
 <head>
 <meta charset="UTF-8" />
-<title>Giriş Sayfası</title>
+<title>İndex Sayfası</title>
 <style>
   body {
-    margin: 0;
-    height: 100vh;
     font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #1e2a38, #134d4d);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  h1 {
-    margin-bottom: 20px;
-  }
-
-  input {
-    padding: 12px;
-    width: 250px;
-    border-radius: 6px;
-    border: none;
-    margin-bottom: 15px;
-    font-size: 16px;
-    background-color: #224455;
-    color: white;
-  }
-
-  button {
-    padding: 12px 25px;
-    border: none;
-    border-radius: 6px;
-    background-color: #2e8b57;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-  }
-
-  button:hover {
-    background-color: #26714a;
-  }
-
-  footer {
-    position: fixed;
-    bottom: 15px;
-    font-size: 14px;
-    color: #ccc;
-  }
-
-  #welcomeMessage {
-    margin-top: 20px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #90ee90;
+    background: #f0f0f0;
+    padding: 20px;
     text-align: center;
+  }
+  button {
+    padding: 12px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  #userBtn {
+    background-color: #4CAF50;
+    color: white;
+  }
+  #adminBtn {
+    background-color: #ff5722;
+    color: white;
   }
 </style>
 </head>
 <body>
 
-<h1>Çalışan Takip Sistemi</h1>
-<input id="username" type="text" placeholder="Adınızı giriniz" autofocus />
-<button id="loginBtn">Giriş Yap</button>
+<h1>Hoşgeldiniz</h1>
 
-<div id="welcomeMessage"></div>
+<!-- Kullanıcı alanı veya giriş -->
+<button id="userBtn">Kullanıcı Alanı</button>
 
-<footer>Yusuf Orhan</footer>
+<!-- Admin Menü Tuşu -->
+<button id="adminBtn">Admin Menü</button>
 
 <script>
-  function login() {
-    const usernameInput = document.getElementById('username');
-    const username = usernameInput.value.trim();
+  // Admin şifresi
+  const adminPassword = 'nrusplus';
 
-    if (!username) {
-      alert('Lütfen isim giriniz.');
-      return;
-    }
-
-    // Mevcut kayıtları al veya boş diziyi başlat
-    let attendance = JSON.parse(localStorage.getItem('attendance')) || [];
-
-    // Tarih-saat kaydı
-    const timestamp = new Date().toISOString();
-
-    // Yeni kayıt ekle
-    attendance.push({ name: username, startTime: timestamp });
-
-    // Güncelle localStorage
-    localStorage.setItem('attendance', JSON.stringify(attendance));
-
-    // Kullanıcıyı kaydet
-    localStorage.setItem('currentUser', username.toLowerCase());
-
-    // Mesaj göster
-    const welcomeDiv = document.getElementById('welcomeMessage');
-    welcomeDiv.textContent = `${username} mesaiye başladı: ${new Date(timestamp).toLocaleString()}`;
-
-    // Giriş alanlarını gizle
-    usernameInput.style.display = 'none';
-    document.getElementById('loginBtn').style.display = 'none';
-
-    // 5 saniye sonra ana sayfaya yönlendir
-    setTimeout(() => {
-      window.location.href = 'index.html'; // Burada index.html yolunu düzenleyebilirsiniz
-    }, 5000);
-  }
-
-  document.getElementById('loginBtn').addEventListener('click', login);
-
-  document.getElementById('username').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      login();
+  document.getElementById('adminBtn').addEventListener('click', function() {
+    const password = prompt('Admin şifresini giriniz:');
+    if (password === adminPassword) {
+      // Şifre doğruysa admin paneline yönlendir
+      window.location.href = 'admin.html';
+    } else {
+      alert('Hatalı şifre!');
     }
   });
 </script>
