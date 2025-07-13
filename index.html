@@ -1,130 +1,164 @@
-
 <!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Çalışan Takip Sistemi</title>
+  <title>DutyFresh | Çalışan Giriş / Çıkış</title>
   <style>
-    /* Tema renkleri */
-    :root {
-      --dark-blue: #0f3460;
-      --gray-dark: #1a1a2e;
-      --gray-light: #cfd8dc;
-      --blue-light: #a3cef1;
-      --nav-bg: #162447;
-      --footer-bg: var(--dark-blue);
-      --btn-bg: var(--dark-blue);
-      --btn-hover-bg: #0b2545;
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
     }
 
     body {
-      margin: 0; padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--gray-dark);
-      color: var(--gray-light);
-      display: flex; flex-direction: column;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #1a1a2e, #0f3460);
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
       min-height: 100vh;
     }
 
-    nav {
-      background-color: var(--nav-bg);
+    header {
+      background: rgba(15, 52, 96, 0.9);
+      padding: 20px 30px;
       display: flex;
-      padding: 10px 20px;
-      gap: 10px;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
     }
 
-    nav button {
-      background-color: var(--btn-bg);
-      border: none;
-      padding: 10px 16px;
-      color: var(--blue-light);
-      cursor: pointer;
-      border-radius: 5px;
-      font-size: 16px;
-      transition: background-color 0.3s ease;
+    header svg {
+      width: 50px;
+      height: 50px;
+      fill: #a3cef1;
     }
-    nav button:hover, nav button.active {
-      background-color: var(--btn-hover-bg);
+
+    header h1 {
+      font-weight: 600;
+      font-size: 1.8rem;
+      margin: 0;
+    }
+
+    nav {
+      background: rgba(15, 52, 96, 0.85);
+      padding: 12px 30px;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    nav a {
+      color: #a3cef1;
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+      position: relative;
+    }
+
+    nav a::after {
+      content: '';
+      display: block;
+      width: 0;
+      height: 3px;
+      background: #a3cef1;
+      transition: width 0.3s;
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      border-radius: 2px;
+    }
+
+    nav a:hover,
+    nav a:focus {
+      color: #d4f1f9;
+    }
+
+    nav a:hover::after,
+    nav a:focus::after {
+      width: 100%;
     }
 
     main {
-      flex: 1;
-      padding: 20px;
-      max-width: 800px;
-      margin: auto;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    input[type="text"] {
+      width: 280px;
+      padding: 14px 16px;
+      border-radius: 30px;
+      border: none;
+      font-size: 1.1rem;
+      outline: none;
+      margin-bottom: 20px;
+      transition: box-shadow 0.3s ease;
+    }
+
+    input[type="text"]:focus {
+      box-shadow: 0 0 10px #a3cef1;
+    }
+
+    button {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 10px;
+      background: #0f3460;
+      color: #a3cef1;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+    }
+
+    button:hover {
+      background: #1a4a8e;
+      color: #d4f1f9;
     }
 
     footer {
-      background-color: var(--footer-bg);
+      background: rgba(15, 52, 96, 0.9);
       text-align: center;
-      padding: 15px 0;
-      font-size: 14px;
-      color: var(--blue-light);
+      padding: 15px;
+      font-size: 0.9rem;
+      color: #a3cef1;
+      box-shadow: 0 -2px 5px rgba(0,0,0,0.4);
     }
 
-    /* Sayfa gizle/göster */
-    .page {
-      display: none;
+    /* Responsive */
+    @media (max-width: 500px) {
+      input[type="text"] {
+        width: 90%;
+      }
+      nav {
+        gap: 20px;
+        padding: 12px 15px;
+      }
+      button {
+        width: 45%;
+        margin: 10px 2.5%;
+      }
+      header h1 {
+        font-size: 1.4rem;
+      }
+      header svg {
+        width: 40px;
+        height: 40px;
+      }
     }
-    .page.active {
-      display: block;
-    }
-
-    /* Giriş Çıkış form */
-    #girisCikis input[type=text] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: none;
-    }
-    #girisCikis button {
-      margin-right: 10px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
-      border: none;
-      background-color: var(--btn-bg);
-      color: var(--blue-light);
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    #girisCikis button:hover {
-      background-color: var(--btn-hover-bg);
-    }
-
-    /* Admin panel tablo */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      color: var(--gray-light);
-    }
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #444;
-      text-align: left;
-    }
-    th {
-      background-color: var(--nav-bg);
-    }
-
-    /* Link stilleri */
-    a {
-      color: var(--blue-light);
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-
   </style>
-
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyD19WZu6bLaKdqDr5pDEF-FZ5Xifcak4MI",
@@ -140,167 +174,51 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    window.firebaseDB = db;
-    window.ref = ref;
-    window.push = push;
-    window.onValue = onValue;
-  </script>
-
-</head>
-<body>
-
-  <nav>
-    <button id="btnGirisCikis" class="active">Giriş / Çıkış</button>
-    <button id="btnAdminPanel">Admin Panel</button>
-    <button id="btnHakkinda">Hakkında</button>
-    <button id="btnSosyalMedya">Sosyal Medya</button>
-  </nav>
-
-  <main>
-    <!-- Giriş Çıkış Sayfası -->
-    <section id="girisCikis" class="page active">
-      <h1>Çalışan Giriş / Çıkış Takip Sistemi</h1>
-      <input type="text" id="inputIsim" placeholder="Ad Soyad" />
-      <div>
-        <button onclick="kaydet('Giriş')">Giriş Yap</button>
-        <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
-      </div>
-    </section>
-
-    <!-- Admin Paneli -->
-    <section id="adminPanel" class="page">
-      <h1>Admin Paneli - Kayıtlar</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Zaman</th>
-            <th>İsim</th>
-            <th>İşlem</th>
-          </tr>
-        </thead>
-        <tbody id="kayitlarListesi">
-          <tr><td colspan="3">Yükleniyor...</td></tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- Hakkında -->
-    <section id="hakkinda" class="page">
-      <h1>Hakkında</h1>
-      <p>Bu sistem çalışanların giriş ve çıkışlarını takip etmek için geliştirilmiştir.</p>
-      <p>Yusuf Orhan tarafından yapılmıştır.</p>
-    </section>
-
-    <!-- Sosyal Medya -->
-    <section id="sosyalMedya" class="page">
-      <h1>Sosyal Medya</h1>
-      <ul>
-        <li><a href="https://twitter.com/yusuforhan" target="_blank" rel="noopener noreferrer">Twitter</a></li>
-        <li><a href="https://github.com/yusuforhan" target="_blank" rel="noopener noreferrer">GitHub</a></li>
-        <li><a href="https://linkedin.com/in/yusuforhan" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
-      </ul>
-    </section>
-  </main>
-
-  <footer>
-    Yusuf Orhan
-  </footer>
-
-  <script>
-    // Menü butonları ve sayfa kontrolü
-    const pages = {
-      girisCikis: document.getElementById('girisCikis'),
-      adminPanel: document.getElementById('adminPanel'),
-      hakkinda: document.getElementById('hakkinda'),
-      sosyalMedya: document.getElementById('sosyalMedya'),
-    };
-
-    const buttons = {
-      btnGirisCikis: document.getElementById('btnGirisCikis'),
-      btnAdminPanel: document.getElementById('btnAdminPanel'),
-      btnHakkinda: document.getElementById('btnHakkinda'),
-      btnSosyalMedya: document.getElementById('btnSosyalMedya'),
-    };
-
-    function sayfaGoster(sayfaAdi) {
-      for (const key in pages) {
-        pages[key].classList.remove('active');
-      }
-      for (const key in buttons) {
-        buttons[key].classList.remove('active');
-      }
-      pages[sayfaAdi].classList.add('active');
-      buttons['btn' + sayfaAdi.charAt(0).toUpperCase() + sayfaAdi.slice(1)].classList.add('active');
-
-      if(sayfaAdi === 'adminPanel') {
-        kayitlariGetir();
-      }
-    }
-
-    buttons.btnGirisCikis.onclick = () => sayfaGoster('girisCikis');
-    buttons.btnAdminPanel.onclick = () => sayfaGoster('adminPanel');
-    buttons.btnHakkinda.onclick = () => sayfaGoster('hakkinda');
-    buttons.btnSosyalMedya.onclick = () => sayfaGoster('sosyalMedya');
-
-    // Firebase kayıt ekleme
-    async function kaydet(tip) {
+    window.kaydet = async function(tip) {
       const isimInput = document.getElementById('inputIsim');
       const isim = isimInput.value.trim();
-      if(!isim) {
-        alert('Lütfen adınızı girin.');
+      if (!isim) {
+        alert("Lütfen adınızı girin.");
         return;
       }
       const zaman = new Date().toISOString();
-
       try {
-        await window.push(window.ref(window.firebaseDB, 'kayitlar'), {
-          isim,
-          tip,
-          zaman
-        });
-        alert(`${tip} kaydı yapıldı!`);
-        isimInput.value = '';
-      } catch (err) {
-        alert('Kayıt yapılamadı: ' + err.message);
+        await push(ref(db, 'kayitlar'), { isim, tip, zaman });
+        alert(tip + " kaydı yapıldı!");
+        isimInput.value = "";
+      } catch (e) {
+        alert("Kayıt yapılamadı: " + e.message);
       }
     }
-
-    // Firebase kayıtları çekme ve listeleme
-    function kayitlariGetir() {
-      const tbody = document.getElementById('kayitlarListesi');
-      tbody.innerHTML = '<tr><td colspan="3">Yükleniyor...</td></tr>';
-
-      const dbRef = window.ref(window.firebaseDB, 'kayitlar');
-      window.onValue(dbRef, (snapshot) => {
-        const data = snapshot.val();
-        if(!data) {
-          tbody.innerHTML = '<tr><td colspan="3">Kayıt bulunamadı.</td></tr>';
-          return;
-        }
-        const kayitlar = Object.values(data);
-        kayitlar.sort((a,b) => new Date(b.zaman) - new Date(a.zaman));
-
-        tbody.innerHTML = '';
-        for(const kayit of kayitlar) {
-          const tr = document.createElement('tr');
-
-          const tdZaman = document.createElement('td');
-          tdZaman.textContent = new Date(kayit.zaman).toLocaleString();
-          tr.appendChild(tdZaman);
-
-          const tdIsim = document.createElement('td');
-          tdIsim.textContent = kayit.isim;
-          tr.appendChild(tdIsim);
-
-          const tdTip = document.createElement('td');
-          tdTip.textContent = kayit.tip;
-          tr.appendChild(tdTip);
-
-          tbody.appendChild(tr);
-        }
-      }, { onlyOnce: true });
-    }
   </script>
+</head>
+<body>
+
+  <header>
+    <!-- Basit Logo SVG -->
+    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="DutyFresh Logo" role="img">
+      <circle cx="32" cy="32" r="30" stroke="#a3cef1" stroke-width="4" fill="none"/>
+      <path d="M20 32 L28 40 L44 24" stroke="#a3cef1" stroke-width="4" fill="none" stroke-linecap="round" />
+    </svg>
+    <h1>DutyFresh Restaurant &amp; Cafe</h1>
+  </header>
+
+  <nav>
+    <a href="index.html" aria-current="page">Giriş / Çıkış</a>
+    <a href="admin.html" target="_blank" rel="noopener">Admin Panel</a>
+    <a href="#hakkinda">Hakkında</a>
+    <a href="#sosyalMedya">Sosyal Medya</a>
+  </nav>
+
+  <main>
+    <input id="inputIsim" type="text" placeholder="Ad Soyad" aria-label="Çalışan Adı" />
+    <div>
+      <button onclick="kaydet('Giriş')">Giriş Yap</button>
+      <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
+    </div>
+  </main>
+
+  <footer>Yusuf Orhan</footer>
 
 </body>
 </html>
