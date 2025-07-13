@@ -82,20 +82,36 @@
       return;
     }
 
+    // Mevcut kayıtları al
+    let attendance = JSON.parse(localStorage.getItem('attendance')) || [];
+
+    // Tarih-saat kaydı
+    const timestamp = new Date().toISOString();
+
+    // Yeni kayıt ekle
+    attendance.push({ name: username, startTime: timestamp });
+
+    // Güncelle localStorage
+    localStorage.setItem('attendance', JSON.stringify(attendance));
+
+    // Kullanıcıyı kaydet (admin veya normal)
+    localStorage.setItem('currentUser', username.toLowerCase());
+
     // Mesaj göster
     const welcomeDiv = document.getElementById('welcomeMessage');
-    welcomeDiv.textContent = `Çalışan ${username} mesaiye başladı.`;
+    welcomeDiv.textContent = `${username} mesaiye başladı: ${new Date(timestamp).toLocaleString()}`;
 
     // Giriş yapma alanlarını gizle
     usernameInput.style.display = 'none';
     document.getElementById('loginBtn').style.display = 'none';
 
-    // Kullanıcıyı localStorage'a kaydet
-    localStorage.setItem('currentUser', username);
-
-    // 3 saniye sonra employee.html sayfasına yönlendir
+    // 3 saniye sonra yönlendir
     setTimeout(() => {
-      window.location.href = 'employee.html';
+      if (username.toLowerCase() === 'admin') {
+        window.location.href = 'admin.html';
+      } else {
+        window.location.href = 'employee.html';
+      }
     }, 3000);
   }
 
