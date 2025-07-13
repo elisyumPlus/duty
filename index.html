@@ -66,7 +66,7 @@
 
 <h1>Çalışan Takip Sistemi</h1>
 <input id="username" type="text" placeholder="Adınızı giriniz" autofocus />
-<button onclick="login()">Giriş Yap</button>
+<button id="loginBtn">Giriş Yap</button>
 
 <div id="welcomeMessage"></div>
 
@@ -88,13 +88,19 @@
 
     // Giriş yapma alanlarını gizle
     usernameInput.style.display = 'none';
-    event.target.style.display = 'none'; // Butonu gizlemek için
+    document.getElementById('loginBtn').style.display = 'none';
 
-    // Butonun kendisine event yoksa, şöyle yapalım:
-    document.querySelector('button').style.display = 'none';
+    // Kullanıcıyı localStorage'a kaydet
+    localStorage.setItem('currentUser', username);
+
+    // 3 saniye sonra employee.html sayfasına yönlendir
+    setTimeout(() => {
+      window.location.href = 'employee.html';
+    }, 3000);
   }
 
-  // Enter ile de giriş yapsın
+  document.getElementById('loginBtn').addEventListener('click', login);
+
   document.getElementById('username').addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
       login();
