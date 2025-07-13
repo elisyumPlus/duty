@@ -1,25 +1,130 @@
+
 <!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <title>Çalışan Giriş / Çıkış</title>
+  <title>Çalışan Takip Sistemi</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding-top: 100px; background: #f9f9f9; }
-    input, button { padding: 10px; margin: 10px; font-size: 16px; }
+    /* Tema renkleri */
+    :root {
+      --dark-blue: #0f3460;
+      --gray-dark: #1a1a2e;
+      --gray-light: #cfd8dc;
+      --blue-light: #a3cef1;
+      --nav-bg: #162447;
+      --footer-bg: var(--dark-blue);
+      --btn-bg: var(--dark-blue);
+      --btn-hover-bg: #0b2545;
+    }
+
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--gray-dark);
+      color: var(--gray-light);
+      display: flex; flex-direction: column;
+      min-height: 100vh;
+    }
+
+    nav {
+      background-color: var(--nav-bg);
+      display: flex;
+      padding: 10px 20px;
+      gap: 10px;
+    }
+
+    nav button {
+      background-color: var(--btn-bg);
+      border: none;
+      padding: 10px 16px;
+      color: var(--blue-light);
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+    nav button:hover, nav button.active {
+      background-color: var(--btn-hover-bg);
+    }
+
+    main {
+      flex: 1;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    footer {
+      background-color: var(--footer-bg);
+      text-align: center;
+      padding: 15px 0;
+      font-size: 14px;
+      color: var(--blue-light);
+    }
+
+    /* Sayfa gizle/göster */
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+
+    /* Giriş Çıkış form */
+    #girisCikis input[type=text] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+    }
+    #girisCikis button {
+      margin-right: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      background-color: var(--btn-bg);
+      color: var(--blue-light);
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #girisCikis button:hover {
+      background-color: var(--btn-hover-bg);
+    }
+
+    /* Admin panel tablo */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      color: var(--gray-light);
+    }
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid #444;
+      text-align: left;
+    }
+    th {
+      background-color: var(--nav-bg);
+    }
+
+    /* Link stilleri */
+    a {
+      color: var(--blue-light);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
   </style>
-</head>
-<body>
 
-  <h1>Çalışan Giriş / Çıkış Takip Sistemi</h1>
-
-  <input type="text" id="isim" placeholder="Ad Soyad" />
-  <br />
-  <button onclick="kaydet('Giriş')">Giriş Yap</button>
-  <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
-
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyD19WZu6bLaKdqDr5pDEF-FZ5Xifcak4MI",
@@ -32,31 +137,168 @@
       measurementId: "G-EWCE3HZZ0V"
     };
 
-    // Firebase'i başlat
     const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
+    const db = getDatabase(app);
 
-    window.kaydet = async function(tip) {
-      const isim = document.getElementById('isim').value.trim();
-      if (!isim) {
-        alert("Lütfen adınızı girin.");
+    window.firebaseDB = db;
+    window.ref = ref;
+    window.push = push;
+    window.onValue = onValue;
+  </script>
+
+</head>
+<body>
+
+  <nav>
+    <button id="btnGirisCikis" class="active">Giriş / Çıkış</button>
+    <button id="btnAdminPanel">Admin Panel</button>
+    <button id="btnHakkinda">Hakkında</button>
+    <button id="btnSosyalMedya">Sosyal Medya</button>
+  </nav>
+
+  <main>
+    <!-- Giriş Çıkış Sayfası -->
+    <section id="girisCikis" class="page active">
+      <h1>Çalışan Giriş / Çıkış Takip Sistemi</h1>
+      <input type="text" id="inputIsim" placeholder="Ad Soyad" />
+      <div>
+        <button onclick="kaydet('Giriş')">Giriş Yap</button>
+        <button onclick="kaydet('Çıkış')">Çıkış Yap</button>
+      </div>
+    </section>
+
+    <!-- Admin Paneli -->
+    <section id="adminPanel" class="page">
+      <h1>Admin Paneli - Kayıtlar</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Zaman</th>
+            <th>İsim</th>
+            <th>İşlem</th>
+          </tr>
+        </thead>
+        <tbody id="kayitlarListesi">
+          <tr><td colspan="3">Yükleniyor...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Hakkında -->
+    <section id="hakkinda" class="page">
+      <h1>Hakkında</h1>
+      <p>Bu sistem çalışanların giriş ve çıkışlarını takip etmek için geliştirilmiştir.</p>
+      <p>Yusuf Orhan tarafından yapılmıştır.</p>
+    </section>
+
+    <!-- Sosyal Medya -->
+    <section id="sosyalMedya" class="page">
+      <h1>Sosyal Medya</h1>
+      <ul>
+        <li><a href="https://twitter.com/yusuforhan" target="_blank" rel="noopener noreferrer">Twitter</a></li>
+        <li><a href="https://github.com/yusuforhan" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="https://linkedin.com/in/yusuforhan" target="_blank" rel="noopener noreferrer">LinkedIn</a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    Yusuf Orhan
+  </footer>
+
+  <script>
+    // Menü butonları ve sayfa kontrolü
+    const pages = {
+      girisCikis: document.getElementById('girisCikis'),
+      adminPanel: document.getElementById('adminPanel'),
+      hakkinda: document.getElementById('hakkinda'),
+      sosyalMedya: document.getElementById('sosyalMedya'),
+    };
+
+    const buttons = {
+      btnGirisCikis: document.getElementById('btnGirisCikis'),
+      btnAdminPanel: document.getElementById('btnAdminPanel'),
+      btnHakkinda: document.getElementById('btnHakkinda'),
+      btnSosyalMedya: document.getElementById('btnSosyalMedya'),
+    };
+
+    function sayfaGoster(sayfaAdi) {
+      for (const key in pages) {
+        pages[key].classList.remove('active');
+      }
+      for (const key in buttons) {
+        buttons[key].classList.remove('active');
+      }
+      pages[sayfaAdi].classList.add('active');
+      buttons['btn' + sayfaAdi.charAt(0).toUpperCase() + sayfaAdi.slice(1)].classList.add('active');
+
+      if(sayfaAdi === 'adminPanel') {
+        kayitlariGetir();
+      }
+    }
+
+    buttons.btnGirisCikis.onclick = () => sayfaGoster('girisCikis');
+    buttons.btnAdminPanel.onclick = () => sayfaGoster('adminPanel');
+    buttons.btnHakkinda.onclick = () => sayfaGoster('hakkinda');
+    buttons.btnSosyalMedya.onclick = () => sayfaGoster('sosyalMedya');
+
+    // Firebase kayıt ekleme
+    async function kaydet(tip) {
+      const isimInput = document.getElementById('inputIsim');
+      const isim = isimInput.value.trim();
+      if(!isim) {
+        alert('Lütfen adınızı girin.');
         return;
       }
       const zaman = new Date().toISOString();
 
-      const kayit = {
-        isim,
-        tip,
-        zaman
-      };
-
       try {
-        await push(ref(database, 'kayitlar'), kayit);
+        await window.push(window.ref(window.firebaseDB, 'kayitlar'), {
+          isim,
+          tip,
+          zaman
+        });
         alert(`${tip} kaydı yapıldı!`);
-        document.getElementById('isim').value = "";
-      } catch (error) {
-        alert("Kayıt sırasında hata oluştu: " + error.message);
+        isimInput.value = '';
+      } catch (err) {
+        alert('Kayıt yapılamadı: ' + err.message);
       }
+    }
+
+    // Firebase kayıtları çekme ve listeleme
+    function kayitlariGetir() {
+      const tbody = document.getElementById('kayitlarListesi');
+      tbody.innerHTML = '<tr><td colspan="3">Yükleniyor...</td></tr>';
+
+      const dbRef = window.ref(window.firebaseDB, 'kayitlar');
+      window.onValue(dbRef, (snapshot) => {
+        const data = snapshot.val();
+        if(!data) {
+          tbody.innerHTML = '<tr><td colspan="3">Kayıt bulunamadı.</td></tr>';
+          return;
+        }
+        const kayitlar = Object.values(data);
+        kayitlar.sort((a,b) => new Date(b.zaman) - new Date(a.zaman));
+
+        tbody.innerHTML = '';
+        for(const kayit of kayitlar) {
+          const tr = document.createElement('tr');
+
+          const tdZaman = document.createElement('td');
+          tdZaman.textContent = new Date(kayit.zaman).toLocaleString();
+          tr.appendChild(tdZaman);
+
+          const tdIsim = document.createElement('td');
+          tdIsim.textContent = kayit.isim;
+          tr.appendChild(tdIsim);
+
+          const tdTip = document.createElement('td');
+          tdTip.textContent = kayit.tip;
+          tr.appendChild(tdTip);
+
+          tbody.appendChild(tr);
+        }
+      }, { onlyOnce: true });
     }
   </script>
 
