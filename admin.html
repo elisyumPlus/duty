@@ -7,7 +7,7 @@
     body { font-family: sans-serif; padding: 20px; background: #eef2f7; }
     #panel { display: none; }
     #log div { margin-bottom: 5px; }
-    input, button { padding: 10px; margin: 10px 0; font-size: 16px; }
+    input, button, select { padding: 10px; margin: 10px 0; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -18,7 +18,19 @@
 
   <div id="panel">
     <h2>Kayıt Listesi</h2>
-    <div id="log"></div>
+
+    <!-- Filtreler -->
+    <label for="filtreIsim">İsim Filtrele:</label>
+    <input type="text" id="filtreIsim" oninput="guncelle()" placeholder="İsim yazın" />
+
+    <label for="filtreTip">Giriş/Çıkış:</label>
+    <select id="filtreTip" onchange="guncelle()">
+      <option value="hepsi">Hepsi</option>
+      <option value="Giriş">Giriş</option>
+      <option value="Çıkış">Çıkış</option>
+    </select>
+
+    <div id="log" style="margin-top:20px; max-height: 300px; overflow-y: auto; background: white; padding: 10px; border: 1px solid #ccc;"></div>
     <button onclick="temizle()">Tüm Kayıtları Temizle</button>
   </div>
 
@@ -38,10 +50,26 @@
     function guncelle() {
       const liste = JSON.parse(localStorage.getItem('kayitlar') || '[]');
       const logDiv = document.getElementById('log');
-      if (liste.length === 0) {
-        logDiv.innerHTML = "<p>Hiç kayıt yok.</p>";
+
+      const filtreIsim = document.getElementById('filtreIsim').value.toLowerCase();
+      const filtreTip = document.getElementById('filtreTip').value;
+
+      let filtrelenmis = liste.filter(kayit => {
+        // Kayıt formatı: "zaman - isim - tip"
+        const parcalar = kayit.split(' - ');
+        const isim = parcalar[1].toLowerCase();
+        const tip = parcalar[2];
+
+        const isimUyarli = isim.includes(filtreIsim);
+        const tipUyarli = filtreTip === "hepsi" || tip === filtreTip;
+
+        return isimUyarli && tipUyarli;
+      });
+
+      if (filtrelenmis.length === 0) {
+        logDiv.innerHTML = "<p>Filtreye uygun kayıt bulunamadı.</p>";
       } else {
-        logDiv.innerHTML = liste.map(k => `<div>${k}</div>`).join('');
+        logDiv.innerHTML = filtrelenmis.map(k => `<div>${k}</div>`).join('');
       }
     }
 
